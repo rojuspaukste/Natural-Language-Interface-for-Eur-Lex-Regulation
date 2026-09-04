@@ -1,0 +1,16 @@
+{
+  "model_name": "BAAI/bge-small-en-v1.5",
+  "embedded_field": "embed_text",
+  "normalized": true,
+  "dtype": "float32",
+  "item_count": 980,
+  "corpus_fingerprint": "0f01b24dd40867f2fc01088477d0b11848bf27d870f317804ce43b1effb06478",
+  "source_json": "eu_ai_act.json",
+  "device": "cpu",
+  "torch_version": "2.14.0+cpu",
+  "sentence_transformers_version": "6.0.1",
+  "dimension": 384,
+  "max_seq_length": 512,
+  "encode_seconds": 24.9,
+  "created_utc": "2026-09-04T19:20:21+00:00"
+}

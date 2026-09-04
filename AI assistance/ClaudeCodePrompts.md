@@ -89,3 +89,25 @@ Cells 15, 17 and 18 were updated too, since a new `type` value would otherwise h
 made the "Articles 1-113 present" check report a false failure.
 
 ---
+
+## 003 — 2026-09-04 — Combining Annex II into one item
+
+> annex 2 has a structure that splits the points into single term text. Perhaps we can combine them all into a single JSON item instead?
+
+**Result.** Agreed — Annex II was a clear outlier. Its points are bare terms with a
+**median of 40 characters** and a minimum of 5 (`'rape,'`), against a median of 109+
+for every other annex. As standalone chunks they retrieve as meaningless fragments,
+and Article 5(1) refers to the list as one closed set.
+
+Now emitted as a single 747-character item, `anx_II`, with `point: null` and the
+intro line joined to all 16 offences. Corpus: 917 → **901 items** (annexes 150 → 134).
+
+Implemented in cell 13 as a `WHOLE_ANNEXES = {"II"}` constant rather than a length
+heuristic — an explicit set is predictable, and mirrors how Article 3 is special-cased.
+Adding another annex is a one-word change.
+
+**Left as-is, but flagged.** Annexes VIII (30 items, median 112) and XIII (8 items,
+median 204) are also field lists with a few very short entries — `'the number of
+registered end-users.'` at 35 characters. Nowhere near Annex II's outlier status, so
+they were not touched; adding them to `WHOLE_ANNEXES` would combine them if retrieval
+proves too fragmented.

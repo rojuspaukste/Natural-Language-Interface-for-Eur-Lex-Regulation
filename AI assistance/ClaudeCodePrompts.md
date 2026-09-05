@@ -197,7 +197,7 @@ one item per prohibited practice.
 
 ## 006 — 2026-09-04 — Fitting every item to the 512-token window
 
-> OK can you perform these changes in the HTML_to_JSON notebook so we end up with JSON items that do not exceed 512 token limit?
+> OK can we split up bigger article paragraphs that consist of multiple points to be within the 512 token limit for text embedding?
 
 **Result.** New section **8. Fitting the embedding model's token window** in
 `HTML_to_JSON.ipynb`. Corpus 901 → **980 items**; items over the limit **21 → 0**,
@@ -238,3 +238,46 @@ So this prompt fixed what it set out to fix — nothing is truncated, and every 
 is now in the index. Getting the *operative prohibition* to outrank the *interpretive
 recitals* is a retrieval-ranking problem for the next stage: a larger `k`, weighting
 articles above recitals, or a reranker.
+
+---
+
+## 007 — 2026-09-04 — Expanding retrieved hits to whole provisions
+
+> I started writing some code that pulls the 10 most relevant items based on embeddings according to the question. Could you extend it so it goes through those items and if any of them are a paragraph of an article or a point from the annex (except for article 3 I suppose or other ones that might not make sense) then also add the rest of the paragraphs from said article into the list? The end result should be a list of embed_text strings.
+
+**Result.** Extended cells 18 and 19 of `Natural_Language_Interface.ipynb`.
+`build_context(question)` returns a list of `embed_text` strings, ready to paste into a
+prompt.
+
+For *"What are the requirements for high-risk AI systems?"*: 10 hits → **28 items,
+3,445 tokens**, delivering Articles 6, 8, 9 and 15 whole, in document order, plus three
+recitals.
+
+**Bug in the starting code.** The loop read `item.get("parent_article_id")`, a field
+that does not exist in the corpus, so `parent_id` was always `None` and
+`parent_articles` stayed empty. Grouping is now derived from the `article` / `annex`
+fields instead.
+
+**Grouping rules.** `group_of()` maps an item to its provision: articles group by
+article number, annexes by roman numeral, recitals by recital number. Three deliberate
+exceptions:
+
+- **Definitions never expand** — a hit on one would drag in all 68 of Article 3, some
+  4,500 tokens. Verified: "definition of a deployer" returns only the 3 definitions that
+  actually matched.
+- **Recital chunks regroup** — `rct_53.chunk_1` and `chunk_2` share a group, so a split
+  recital is reassembled rather than delivered half-read.
+- **Oversized groups fall back to the hits alone.** Rather than hardcoding a list of
+  provisions that "don't make sense" to expand, any group above `MAX_GROUP_TOKENS`
+  (3,000) contributes only its matching items. Measured first: articles run to a median
+  of 4 items and a maximum of 19, annexes to a median of 9, so almost everything expands.
+
+Groups are added best-scoring first under a `CONTEXT_BUDGET` of 12,000 tokens, then the
+final list is sorted into document order so the model reads the act as written.
+
+**This also resolves the ranking problem from 006.** The prohibition on workplace
+emotion recognition ranked only 6th, behind three recitals. But 6th is inside the top
+10, so expansion now pulls **all 15 items of Article 5** into the context, `point_f`
+included. The model sees the actual prohibition even though a recital outranked it —
+whole-provision expansion turns out to be a more robust fix than reranking would have
+been.

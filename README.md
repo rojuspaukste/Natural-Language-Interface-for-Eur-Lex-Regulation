@@ -152,7 +152,7 @@ pip install beautifulsoup4 lxml numpy torch sentence-transformers transformers g
 2. Run `code/HTML_to_JSON.ipynb` to build `data/JSON/eu_ai_act.json`.
 3. Run `code/Natural_Language_Interface.ipynb`. The first run downloads the embedding model (~130 MB) and encodes the corpus; later runs load the cached vectors. The final cell opens a question loop — type `exit` to leave.
 
-No GPU required; CPU encoding of the full corpus takes well under a minute.
+CPU encoding of the full corpus takes well under a minute.
 
 ---
 
@@ -192,5 +192,3 @@ Coding assistants were used to generate mechanical code from specifications deci
 MIT — see [LICENSE](LICENSE).
 
 ---
-
-*Built as a take-home exercise. Not legal advice; the authentic text of the regulation is the one published on [EUR-Lex](https://eur-lex.europa.eu/eli/reg/2024/1689/oj/eng).*

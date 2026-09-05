@@ -24,7 +24,7 @@ This is informational only and is not legal advice.
 
 ## Architecture
 
-![Solution architecture](Documentation/architecture.png)
+![Solution architecture](Documentation/architecture_simple.png)
 
 Two notebooks, run in order. The first builds the knowledge base; the second indexes it and answers questions.
 
